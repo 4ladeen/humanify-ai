@@ -75,9 +75,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     btn.addEventListener('click', () => switchTab(btn.dataset.tab));
   });
 
-  // Refresh button
+  // Refresh button — force re-analysis, bypassing the AI result cache
   document.getElementById('btnRefresh').addEventListener('click', () => {
-    if (currentAnalysis) runAnalysis();
+    if (currentAnalysis) runAnalysis(true);
   });
 
   // Analyze button
@@ -144,7 +144,7 @@ function switchTab(tabName) {
 }
 
 // ---- Analysis ---------------------------------------------------------------
-async function runAnalysis() {
+async function runAnalysis(forceRefresh = false) {
   setAnalyzing(true);
 
   try {
@@ -162,6 +162,7 @@ async function runAnalysis() {
     const analysisOptions = {
       useAI: settings.useAIAnalysis !== false,
       model: settings.model || 'gpt-4o-mini',
+      forceRefresh,
     };
 
     currentAnalysis = await window.HumanifyDetector.analyze(currentText, analysisOptions);
@@ -464,12 +465,26 @@ async function saveSettingsHandler() {
 // ---- Puter.js Availability --------------------------------------------------
 function checkPuterAvailability() {
   const badge = els.onlineBadge;
-  if (typeof puter !== 'undefined' && puter.ai) {
+  if (typeof puter !== 'undefined' && puter.ai && !puter.__isStub) {
     badge.classList.remove('offline');
   } else {
     badge.classList.add('offline');
     badge.innerHTML = '<span>Local Only</span>';
     badge.title = 'Puter.js not available — using local heuristics only';
+    // Disable the humanize button and show a tooltip explaining why
+    if (els.btnHumanize) {
+      els.btnHumanize.disabled = true;
+      els.btnHumanize.title = 'Humanization requires the Puter.js AI service. Please check your connection.';
+    }
+    // Emit a visible warning on the humanize tab
+    const humanizeSection = document.querySelector('.humanize-section');
+    if (humanizeSection && !document.getElementById('puterWarning')) {
+      const warning = document.createElement('div');
+      warning.id = 'puterWarning';
+      warning.className = 'puter-warning';
+      warning.textContent = '⚠ Puter.js AI service is unavailable. Humanization is disabled.';
+      humanizeSection.prepend(warning);
+    }
   }
 }
 
