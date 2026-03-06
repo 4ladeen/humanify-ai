@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Humanify AI — Settings</title>
+  <link rel="stylesheet" href="settings.css" />
+</head>
+<body>
+  <div class="settings-page">
+    <!-- Header -->
+    <header class="settings-header">
+      <div class="header-brand">
+        <img src="../assets/logo.svg" alt="" class="header-logo" />
+        <span class="brand-name">Humanify</span><span class="brand-ai">AI</span>
+      </div>
+      <h1>Settings</h1>
+    </header>
+
+    <main class="settings-main">
+      <!-- AI Configuration -->
+      <section class="settings-section">
+        <h2 class="section-title">AI Configuration</h2>
+        <div class="form-group">
+          <label class="form-label" for="model">AI Model (via Puter.js — Free)</label>
+          <select class="form-select" id="model">
+            <option value="gpt-4o-mini">GPT-4o Mini — Fast & Free</option>
+            <option value="gpt-4o">GPT-4o — Most Accurate (Free)</option>
+            <option value="claude-3-5-sonnet">Claude 3.5 Sonnet (Free)</option>
+            <option value="claude-3-haiku">Claude 3 Haiku — Fastest (Free)</option>
+          </select>
+          <p class="form-hint">All models are completely free via Puter.js — no API key needed</p>
+        </div>
+
+        <div class="form-group">
+          <div class="toggle-row">
+            <div>
+              <div class="form-label">Use AI Deep Analysis</div>
+              <p class="form-hint">Combine local heuristics with GPT-4o-mini for higher accuracy</p>
+            </div>
+            <label class="toggle-wrap">
+              <input type="checkbox" id="useAIAnalysis" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- Detection Settings -->
+      <section class="settings-section">
+        <h2 class="section-title">Detection Settings</h2>
+        <div class="form-group">
+          <label class="form-label" for="sensitivity">
+            Sensitivity
+            <span class="badge" id="sensitivityLabel">Medium</span>
+          </label>
+          <input type="range" class="form-range" id="sensitivity"
+                 min="0" max="100" value="50" step="10" />
+          <div class="range-labels">
+            <span>Lenient (fewer false positives)</span>
+            <span>Strict (catch more AI text)</span>
+          </div>
+          <p class="form-hint">Higher sensitivity flags more text as AI-generated</p>
+        </div>
+      </section>
+
+      <!-- Humanization Settings -->
+      <section class="settings-section">
+        <h2 class="section-title">Humanization Settings</h2>
+        <div class="form-group">
+          <label class="form-label" for="humanizationStyle">Writing Style</label>
+          <select class="form-select" id="humanizationStyle">
+            <option value="natural">Natural Voice — Balanced and authentic</option>
+            <option value="academic">Academic but Human — Formal yet personal</option>
+            <option value="casual">Casual & Conversational — Relaxed tone</option>
+            <option value="professional">Professional but Warm — Business-friendly</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Default Aggressiveness</label>
+          <div class="agg-grid">
+            <label class="agg-card">
+              <input type="radio" name="defaultAggLevel" value="light" />
+              <div class="agg-card-inner">
+                <div class="agg-card-title">Light</div>
+                <div class="agg-card-desc">Fix obvious AI patterns only</div>
+              </div>
+            </label>
+            <label class="agg-card">
+              <input type="radio" name="defaultAggLevel" value="medium" checked />
+              <div class="agg-card-inner">
+                <div class="agg-card-title">Medium</div>
+                <div class="agg-card-desc">Balanced naturalness</div>
+              </div>
+            </label>
+            <label class="agg-card">
+              <input type="radio" name="defaultAggLevel" value="aggressive" />
+              <div class="agg-card-inner">
+                <div class="agg-card-title">Aggressive</div>
+                <div class="agg-card-desc">Maximum humanization</div>
+              </div>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- Appearance -->
+      <section class="settings-section">
+        <h2 class="section-title">Appearance</h2>
+        <div class="form-group">
+          <div class="toggle-row">
+            <div>
+              <div class="form-label">Dark Mode</div>
+              <p class="form-hint">Use dark theme (recommended)</p>
+            </div>
+            <label class="toggle-wrap">
+              <input type="checkbox" id="darkMode" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- Save / Reset -->
+      <div class="settings-actions">
+        <button class="btn btn-save" id="btnSave">Save Settings</button>
+        <button class="btn btn-reset" id="btnReset">Reset to Defaults</button>
+      </div>
+
+      <div class="save-feedback" id="saveFeedback" style="display:none">
+        ✓ Settings saved successfully
+      </div>
+
+      <!-- About -->
+      <section class="settings-section about-section">
+        <h2 class="section-title">About Humanify AI</h2>
+        <div class="about-grid">
+          <div class="about-item">
+            <span class="about-label">Version</span>
+            <span class="about-value">1.0.0</span>
+          </div>
+          <div class="about-item">
+            <span class="about-label">AI Provider</span>
+            <span class="about-value">Puter.js (Free)</span>
+          </div>
+          <div class="about-item">
+            <span class="about-label">Model</span>
+            <span class="about-value" id="currentModelDisplay">GPT-4o Mini</span>
+          </div>
+        </div>
+        <p class="about-desc">
+          Humanify AI uses Puter.js for completely free, unlimited AI access — no API key, 
+          no account needed. It also works offline with local heuristic analysis.
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <script src="settings.js"></script>
+</body>
+</html>
