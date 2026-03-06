@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   applySettingsToUI(settings);
 
   // Check Puter.js availability
-  checkPuterAvailability();
+  await checkPuterAvailability();
 
   // Tab navigation
   document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -270,9 +270,15 @@ function renderSentences(sentences) {
       `<span class="sentence-reason-tag">${escapeHtml(r)}</span>`
     ).join('');
 
+    const lineNum = sentence.id + 1;
+    const typeLabel = sentence.color === 'red' ? '🔴 AI Generated'
+      : sentence.color === 'yellow' ? '🟡 Suspicious' : '🟢 Human';
+
     item.innerHTML = `
       <div class="sentence-header">
-        <span class="sentence-score-badge ${sentence.color}">${sentence.score}% Human</span>
+        <span class="sentence-line-num">Line ${lineNum}</span>
+        <span class="sentence-type-label ${sentence.color}">${typeLabel}</span>
+        <span class="sentence-score-badge ${sentence.color}">${sentence.score}%</span>
       </div>
       <div class="sentence-text">${escapeHtml(sentence.text)}</div>
       ${reasonsHtml ? `<div class="sentence-reasons">${reasonsHtml}</div>` : ''}
@@ -463,8 +469,14 @@ async function saveSettingsHandler() {
 }
 
 // ---- Puter.js Availability --------------------------------------------------
-function checkPuterAvailability() {
+async function checkPuterAvailability() {
   const badge = els.onlineBadge;
+
+  // Allow puter._loadToken() to resolve if the token was previously saved
+  if (typeof puter !== 'undefined' && typeof puter._loadToken === 'function') {
+    await puter._loadToken();
+  }
+
   if (typeof puter !== 'undefined' && puter.ai && !puter.__isStub) {
     badge.classList.remove('offline');
   } else {

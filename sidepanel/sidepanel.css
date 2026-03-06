@@ -284,13 +284,38 @@ body {
 
 .sentence-item.hidden { display: none; }
 
-.sentence-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
+.sentence-header { display: flex; align-items: center; gap: 6px; margin-bottom: 5px; }
+
+.sentence-line-num {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  font-family: 'SF Mono', 'Consolas', 'Courier New', monospace;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2px 6px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.sentence-type-label {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.sentence-type-label.green { color: var(--success); }
+.sentence-type-label.yellow { color: var(--warning); }
+.sentence-type-label.red { color: var(--danger); }
 
 .sentence-score-badge {
   font-size: 10px;
   font-weight: 700;
   padding: 2px 6px;
   border-radius: 10px;
+  margin-left: auto;
+  flex-shrink: 0;
 }
 
 .sentence-score-badge.green { background: rgba(0,184,148,0.15); color: var(--success); }
