@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Humanify AI</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="popup-container">
+    <!-- Header -->
+    <header class="popup-header">
+      <div class="logo-wrap">
+        <img src="../assets/logo.svg" alt="Humanify AI" class="logo" />
+        <div class="brand">
+          <span class="brand-name">Humanify</span>
+          <span class="brand-ai">AI</span>
+        </div>
+      </div>
+      <div class="version">v1.0</div>
+    </header>
+
+    <!-- Status indicator -->
+    <div class="status-bar" id="statusBar">
+      <span class="status-dot" id="statusDot"></span>
+      <span class="status-text" id="statusText">Checking page...</span>
+    </div>
+
+    <!-- Score Gauge -->
+    <div class="gauge-section" id="gaugeSection">
+      <div class="gauge-container">
+        <svg class="gauge-svg" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+          <!-- Background arc -->
+          <path class="gauge-track" d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke-width="16" stroke-linecap="round"/>
+          <!-- Score arc -->
+          <path class="gauge-fill" id="gaugeFill" d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke-width="16" stroke-linecap="round"/>
+        </svg>
+        <div class="gauge-value">
+          <span class="score-number" id="scoreNumber">--</span>
+          <span class="score-unit">% Human</span>
+        </div>
+      </div>
+      <div class="score-label" id="scoreLabel">Not analyzed</div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="stats-row" id="statsRow">
+      <div class="stat-item">
+        <span class="stat-value" id="statTotal">--</span>
+        <span class="stat-label">Sentences</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-value stat-flagged" id="statFlagged">--</span>
+        <span class="stat-label">Flagged</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-value stat-green" id="statClean">--</span>
+        <span class="stat-label">Clean</span>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="buttons-section">
+      <button class="btn btn-primary" id="btnFullAnalysis">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        Full Analysis
+      </button>
+      <button class="btn btn-secondary" id="btnQuickScan">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+        </svg>
+        Quick Scan
+      </button>
+      <button class="btn btn-outline" id="btnSettings">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        Settings
+      </button>
+    </div>
+
+    <!-- Not Google Doc message -->
+    <div class="not-gdoc-message" id="notGdocMessage" style="display:none;">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#6C5CE7" stroke-width="1.5">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <line x1="16" y1="13" x2="8" y2="13"/>
+        <line x1="16" y1="17" x2="8" y2="17"/>
+        <polyline points="10 9 9 9 8 9"/>
+      </svg>
+      <p>Open a <strong>Google Doc</strong> to start analyzing</p>
+      <a href="https://docs.google.com" target="_blank" class="link-gdoc">Open Google Docs →</a>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
