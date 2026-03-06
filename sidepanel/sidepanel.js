@@ -195,6 +195,8 @@ function setAnalyzing(analyzing) {
 
 // ---- Display Analysis Results -----------------------------------------------
 function displayAnalysisResults(result) {
+  // Side panel gauge ring circumference: 2 * π * r = 2 * π * 32 ≈ 201
+  // (matches the SVG circle: cx=40,cy=40,r=32 in sidepanel.html gauge)
   const GAUGE_CIRCUMFERENCE = 201;
 
   // Score gauge
@@ -517,6 +519,9 @@ function animateNumber(el, from, to, duration) {
 }
 
 function escapeHtml(text) {
+  if (typeof window !== 'undefined' && window.HumanifyUtils) {
+    return window.HumanifyUtils.escapeHtml(text);
+  }
   return String(text || '')
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')

@@ -21,6 +21,10 @@
   /**
    * Extract all text from the Google Docs editor.
    * Google Docs uses .kix-paragraphrenderer > .kix-lineview > spans
+   *
+   * NOTE: These CSS class names (.kix-*) are Google Docs internal implementation
+   * details and could change in future Google Docs updates. If extraction stops
+   * working, inspect the Google Docs DOM and update the selectors below.
    * @returns {{ text: string, paragraphs: string[] }}
    */
   function extractText() {

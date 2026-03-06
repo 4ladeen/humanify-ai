@@ -2,7 +2,9 @@
  * popup.js - Humanify AI Extension Popup Logic
  */
 
-const GAUGE_CIRCUMFERENCE = 251; // approximate arc length for the SVG path
+// Popup gauge arc circumference: approximate path length for the SVG half-arc
+// SVG path: "M 20 100 A 80 80 0 0 1 180 100" → semicircle r=80 → π*80 ≈ 251
+const GAUGE_CIRCUMFERENCE = 251;
 
 document.addEventListener('DOMContentLoaded', async () => {
   const statusDot = document.getElementById('statusDot');
