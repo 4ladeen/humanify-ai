@@ -183,7 +183,11 @@ async function runAnalysis(forceRefresh = false) {
     chrome.runtime.sendMessage({ type: 'UPDATE_BADGE', score: currentAnalysis.overallScore });
 
   } catch (err) {
-    showError('Analysis failed: ' + err.message);
+    if (err.isAuthCancellation) {
+      showError('Sign-in required to use AI analysis.', 'info');
+    } else {
+      showError('Analysis failed: ' + err.message);
+    }
   }
 
   setAnalyzing(false);
@@ -359,7 +363,9 @@ async function runHumanization() {
     }, 800);
 
   } catch (err) {
-    if (err.isGatewayError) {
+    if (err.isAuthCancellation) {
+      showError('Sign-in required to use AI humanization.', 'info');
+    } else if (err.isGatewayError) {
       showOutageWarning('Humanize AI is temporarily unavailable due to maintenance. Please try again later.');
     } else {
       showError('Humanization failed: ' + err.message);
@@ -641,7 +647,8 @@ function sendMessage(msg) {
 function showError(message, type = 'error') {
   const toast = els.errorToast;
   toast.textContent = message;
-  toast.style.background = type === 'success' ? '#00B894' : '#E17055';
+  const colors = { success: '#00B894', info: '#636e72', error: '#E17055' };
+  toast.style.background = colors[type] || colors.error;
   toast.style.display = 'block';
   setTimeout(() => { toast.style.display = 'none'; }, 3500);
 }
