@@ -243,6 +243,12 @@
         injectText(message.text).then(sendResponse);
         return true;
 
+      case 'GET_SELECTED_TEXT': {
+        const sel = window.getSelection();
+        sendResponse({ text: sel ? sel.toString() : '' });
+        break;
+      }
+
       case 'HIGHLIGHT_SENTENCES':
         highlightSentences(message.sentences);
         sendResponse({ success: true });
