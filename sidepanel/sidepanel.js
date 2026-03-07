@@ -11,6 +11,8 @@ let humanizedText = '';          // Humanized version
 let settings = {};               // Loaded settings
 let activeFilter = 'all';        // Current sentence filter
 let humanizeLevel = 'medium';    // Aggressiveness level
+let puterOutageActive = false;   // true while a gateway/maintenance outage is detected
+let _recoveryTimer = null;       // interval handle for outage-recovery polling
 
 const AGG_DESCRIPTIONS = {
   light: 'Minimal changes — fix obvious AI patterns while preserving style',
@@ -41,6 +43,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     humanizeProgress: document.getElementById('humanizeProgress'),
     progressBar: document.getElementById('progressBar'),
     progressLabel: document.getElementById('progressLabel'),
+    puterOutage: document.getElementById('puterOutage'),
     diffSection: document.getElementById('diffSection'),
     diffView: document.getElementById('diffView'),
     sideView: document.getElementById('sideView'),
@@ -356,7 +359,11 @@ async function runHumanization() {
     }, 800);
 
   } catch (err) {
-    showError('Humanization failed: ' + err.message);
+    if (err.isGatewayError) {
+      showOutageWarning('Humanize AI is temporarily unavailable due to maintenance. Please try again later.');
+    } else {
+      showError('Humanization failed: ' + err.message);
+    }
     els.humanizeProgress.style.display = 'none';
   }
 
@@ -364,6 +371,11 @@ async function runHumanization() {
 }
 
 function setHumanizing(isHumanizing) {
+  // Don't re-enable the button while an outage is active
+  if (!isHumanizing && puterOutageActive) {
+    els.humanizeBtnText.textContent = 'Humanize Text';
+    return;
+  }
   els.btnHumanize.disabled = isHumanizing;
   els.humanizeBtnText.textContent = isHumanizing ? 'Humanizing...' : 'Humanize Text';
 }
@@ -497,6 +509,107 @@ async function checkPuterAvailability() {
       warning.textContent = '⚠ Puter.js AI service is unavailable. Humanization is disabled.';
       humanizeSection.prepend(warning);
     }
+  }
+}
+
+// ---- Puter Outage Handling --------------------------------------------------
+function showOutageWarning(message) {
+  puterOutageActive = true;
+
+  // Show the outage banner inside the humanize tab
+  const banner = els.puterOutage;
+  if (banner) {
+    const title = document.createElement('strong');
+    title.textContent = '⚠ Humanization Temporarily Unavailable';
+
+    const body = document.createTextNode(message);
+
+    const hint = document.createElement('small');
+    hint.textContent = 'Local AI detection still works normally. Humanization will re-enable automatically when the service recovers.';
+
+    banner.replaceChildren(title, body, hint);
+    banner.classList.add('visible');
+  }
+
+  // Disable the humanize button
+  if (els.btnHumanize) {
+    els.btnHumanize.disabled = true;
+    els.btnHumanize.title = message;
+  }
+
+  // Update the online badge to show outage state
+  const badge = els.onlineBadge;
+  if (badge) {
+    badge.classList.remove('offline');
+    badge.classList.add('outage');
+    badge.innerHTML = '<span>Service Down</span>';
+    badge.title = message;
+  }
+
+  startOutageRecovery();
+}
+
+function clearOutageWarning() {
+  puterOutageActive = false;
+
+  if (_recoveryTimer) {
+    clearInterval(_recoveryTimer);
+    _recoveryTimer = null;
+  }
+
+  // Hide the outage banner
+  const banner = els.puterOutage;
+  if (banner) {
+    banner.classList.remove('visible');
+  }
+
+  // Re-enable the humanize button
+  if (els.btnHumanize) {
+    els.btnHumanize.disabled = false;
+    els.btnHumanize.title = '';
+  }
+
+  // Restore online badge
+  const badge = els.onlineBadge;
+  if (badge) {
+    badge.classList.remove('outage');
+    badge.innerHTML = '<span class="online-dot"></span><span>AI Online</span>';
+    badge.title = 'AI Analysis available';
+  }
+
+  showError('✓ Puter AI service has recovered. Humanization is available again.', 'success');
+}
+
+function startOutageRecovery() {
+  if (_recoveryTimer) clearInterval(_recoveryTimer);
+  // Poll every 30 seconds to check if the service has recovered
+  _recoveryTimer = setInterval(checkPuterRecovery, 30_000);
+}
+
+async function checkPuterRecovery() {
+  if (!puterOutageActive) {
+    clearInterval(_recoveryTimer);
+    _recoveryTimer = null;
+    return;
+  }
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 8000);
+  try {
+    // A POST with an intentionally invalid payload returns 4xx (not 5xx) when
+    // the API gateway is healthy, confirming the service has recovered.
+    const resp = await fetch('https://api.puter.com/drivers/call', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ interface: 'ping' }),
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+    if (resp.status < 500) {
+      clearOutageWarning();
+    }
+  } catch {
+    clearTimeout(timeoutId);
+    // Network/timeout error — still in outage, try again next interval
   }
 }
 

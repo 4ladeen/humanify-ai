@@ -658,6 +658,39 @@ del.diff-delete {
   font-weight: 600;
 }
 
+/* ---- Puter Outage Banner ---- */
+.puter-outage-banner {
+  display: none;
+  padding: 12px 14px;
+  background: rgba(253, 203, 110, 0.1);
+  border: 1px solid rgba(253, 203, 110, 0.35);
+  border-radius: 8px;
+  font-size: 12px;
+  color: var(--warning);
+  line-height: 1.6;
+}
+
+.puter-outage-banner.visible { display: block; }
+
+.puter-outage-banner strong {
+  font-weight: 700;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.puter-outage-banner small {
+  display: block;
+  margin-top: 6px;
+  opacity: 0.8;
+  font-size: 11px;
+}
+
+.online-badge.outage {
+  color: var(--warning);
+  background: rgba(253, 203, 110, 0.1);
+  border-color: rgba(253, 203, 110, 0.35);
+}
+
 /* ---- Scrollbar ---- */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
