@@ -4,7 +4,11 @@
   "version": "1.0.0",
   "description": "Detect AI-written text in Google Docs and humanize it to be 100% undetectable",
   "permissions": ["activeTab", "storage", "sidePanel", "scripting"],
-  "host_permissions": ["https://docs.google.com/*"],
+  "host_permissions": [
+    "https://docs.google.com/*",
+    "https://api.puter.com/*",
+    "https://puter.com/*"
+  ],
   "content_scripts": [
     {
       "matches": ["https://docs.google.com/document/*"],
